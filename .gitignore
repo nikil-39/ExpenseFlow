@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+icons/gen.py
+icons/*.svg
+.DS_Store
+Thumbs.db

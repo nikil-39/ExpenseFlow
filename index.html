@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ExpenseFlow — Smart Expense Tracker</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#6C5CE7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ExpenseFlow">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+        </div>
+        <span class="logo-text">ExpenseFlow</span>
+      </div>
+    </div>
+
+    <nav class="nav-menu">
+      <a href="#" class="nav-item active" data-tab="overview">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        <span>Overview</span>
+      </a>
+      <a href="#" class="nav-item" data-tab="spend">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <span>Spend</span>
+      </a>
+      <a href="#" class="nav-item" data-tab="analytics">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+        <span>Analytics</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+        <span>Toggle Theme</span>
+      </button>
+      <div class="version-info">v1.0 — Made with ♥</div>
+    </div>
+  </aside>
+
+  <!-- ========== MOBILE HEADER ========== -->
+  <header class="mobile-header">
+    <button class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="mobile-logo">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+      </svg>
+      <span>ExpenseFlow</span>
+    </div>
+  </header>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <main class="main-content">
+
+    <!-- ==================== OVERVIEW TAB ==================== -->
+    <section class="tab-content active" id="tab-overview">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Overview</h1>
+          <p class="page-subtitle">Your financial snapshot at a glance</p>
+        </div>
+        <div class="year-selector">
+          <button class="year-btn" id="overviewYearPrev">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <span class="year-display" id="overviewYear">2026</span>
+          <button class="year-btn" id="overviewYearNext">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <div class="stat-card stat-income">
+          <div class="stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Total Income</span>
+            <span class="stat-value" id="statTotalIncome">₹0</span>
+          </div>
+          <div class="stat-trend up" id="incomeTrend">+0%</div>
+        </div>
+        <div class="stat-card stat-expense">
+          <div class="stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Total Expenses</span>
+            <span class="stat-value" id="statTotalExpense">₹0</span>
+          </div>
+          <div class="stat-trend down" id="expenseTrend">-0%</div>
+        </div>
+        <div class="stat-card stat-savings">
+          <div class="stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Net Savings</span>
+            <span class="stat-value" id="statNetSavings">₹0</span>
+          </div>
+          <div class="stat-trend" id="savingsTrend">0%</div>
+        </div>
+        <div class="stat-card stat-rate">
+          <div class="stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Savings Rate</span>
+            <span class="stat-value" id="statSavingsRate">0%</span>
+          </div>
+          <div class="stat-badge" id="savingsBadge">—</div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="charts-grid">
+        <div class="chart-card chart-wide">
+          <div class="chart-header">
+            <h3>Income vs Expenses</h3>
+            <span class="chart-subtitle">Monthly comparison for the year</span>
+          </div>
+          <div class="chart-body">
+            <canvas id="chartIncomeVsExpense"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>Spending by Category</h3>
+            <span class="chart-subtitle">Where your money goes</span>
+          </div>
+          <div class="chart-body chart-body-donut">
+            <canvas id="chartCategoryDonut"></canvas>
+            <div class="donut-center" id="donutCenter">
+              <span class="donut-total">₹0</span>
+              <span class="donut-label">Total Spent</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Transactions -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Recent Transactions</h3>
+          <button class="btn btn-ghost" onclick="App.switchTab('spend')">View All →</button>
+        </div>
+        <div class="transactions-list" id="recentTransactions">
+          <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4">
+              <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
+            </svg>
+            <p>No transactions yet. Start tracking your expenses!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SPEND TAB ==================== -->
+    <section class="tab-content" id="tab-spend">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Spend</h1>
+          <p class="page-subtitle">Track your monthly income & expenses</p>
+        </div>
+        <div class="month-selector">
+          <button class="year-btn" id="spendMonthPrev">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <span class="month-display" id="spendMonth">March 2026</span>
+          <button class="year-btn" id="spendMonthNext">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Monthly Summary Cards -->
+      <div class="spend-summary">
+        <div class="summary-card income-card" id="monthlyIncomeCard">
+          <div class="summary-top">
+            <span class="summary-label">Monthly Income</span>
+            <button class="btn btn-sm btn-primary" id="setIncomeBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Set Income
+            </button>
+          </div>
+          <div class="summary-value" id="monthlyIncomeValue">₹0</div>
+          <div class="summary-bar">
+            <div class="bar-track">
+              <div class="bar-fill bar-income" id="incomeBarFill" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="summary-card expense-card">
+          <div class="summary-top">
+            <span class="summary-label">Total Spent</span>
+            <button class="btn btn-sm btn-accent" id="addExpenseBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Expense
+            </button>
+          </div>
+          <div class="summary-value" id="monthlyExpenseValue">₹0</div>
+          <div class="summary-bar">
+            <div class="bar-track">
+              <div class="bar-fill bar-expense" id="expenseBarFill" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="summary-card balance-card">
+          <div class="summary-top">
+            <span class="summary-label">Remaining Balance</span>
+          </div>
+          <div class="summary-value" id="monthlyBalanceValue">₹0</div>
+          <div class="summary-bar">
+            <div class="bar-track">
+              <div class="bar-fill bar-balance" id="balanceBarFill" style="width: 100%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Breakdown -->
+      <div class="category-breakdown">
+        <div class="cat-card cat-investments">
+          <div class="cat-icon">📈</div>
+          <div class="cat-info">
+            <span class="cat-name">Investments</span>
+            <span class="cat-amount" id="catInvestments">₹0</span>
+          </div>
+          <div class="cat-percent" id="catInvestmentsPercent">0%</div>
+        </div>
+        <div class="cat-card cat-need">
+          <div class="cat-icon">🏠</div>
+          <div class="cat-info">
+            <span class="cat-name">Need</span>
+            <span class="cat-amount" id="catNeed">₹0</span>
+          </div>
+          <div class="cat-percent" id="catNeedPercent">0%</div>
+        </div>
+        <div class="cat-card cat-fun">
+          <div class="cat-icon">🎉</div>
+          <div class="cat-info">
+            <span class="cat-name">Fun Money</span>
+            <span class="cat-amount" id="catFun">₹0</span>
+          </div>
+          <div class="cat-percent" id="catFunPercent">0%</div>
+        </div>
+      </div>
+
+      <!-- Filter & Transaction List -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Transactions</h3>
+          <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all">All</button>
+            <button class="filter-tab" data-filter="Investments">Investments</button>
+            <button class="filter-tab" data-filter="Need">Need</button>
+            <button class="filter-tab" data-filter="Fun Money">Fun Money</button>
+          </div>
+        </div>
+        <div class="transactions-list" id="spendTransactions">
+          <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4">
+              <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
+            </svg>
+            <p>No expenses this month. Click "Add Expense" to get started!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== ANALYTICS TAB ==================== -->
+    <section class="tab-content" id="tab-analytics">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Analytics</h1>
+          <p class="page-subtitle">Deep insights into your spending habits</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-outline" id="exportCsvBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export CSV
+          </button>
+          <button class="btn btn-outline" id="manageSubcatBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Manage Categories
+          </button>
+        </div>
+      </div>
+
+      <!-- Analytics Charts -->
+      <div class="charts-grid">
+        <div class="chart-card chart-wide">
+          <div class="chart-header">
+            <h3>Spending Trends</h3>
+            <span class="chart-subtitle">6-month expense trend</span>
+          </div>
+          <div class="chart-body">
+            <canvas id="chartSpendingTrend"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>Savings Trend</h3>
+            <span class="chart-subtitle">Monthly savings over time</span>
+          </div>
+          <div class="chart-body">
+            <canvas id="chartSavingsTrend"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Expenses & Insights -->
+      <div class="analytics-grid">
+        <div class="card">
+          <div class="card-header">
+            <h3>Top Expenses</h3>
+            <span class="badge">This Year</span>
+          </div>
+          <div class="top-expenses-list" id="topExpensesList">
+            <div class="empty-state small">
+              <p>No expense data available yet.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3>Subcategory Breakdown</h3>
+            <span class="badge">This Year</span>
+          </div>
+          <div class="chart-body">
+            <canvas id="chartSubcategoryBar"></canvas>
+          </div>
+        </div>
+        <div class="card insight-card">
+          <div class="card-header">
+            <h3>💡 Smart Insights</h3>
+          </div>
+          <div class="insights-list" id="insightsList">
+            <div class="insight-item">
+              <span class="insight-icon">📊</span>
+              <span>Start tracking your expenses to get personalized insights!</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========== OVERLAY ========== -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- ========== INCOME MODAL ========== -->
+  <div class="modal" id="incomeModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Set Monthly Income</h2>
+        <button class="modal-close" onclick="App.closeModal('incomeModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-month" id="incomeModalMonth">March 2026</div>
+        <div class="form-group">
+          <label>Income Amount (₹)</label>
+          <div class="input-group">
+            <span class="input-prefix">₹</span>
+            <input type="number" id="incomeAmountInput" placeholder="Enter your monthly income" min="0" step="100">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="App.closeModal('incomeModal')">Cancel</button>
+        <button class="btn btn-primary" id="saveIncomeBtn">Save Income</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== EXPENSE MODAL ========== -->
+  <div class="modal" id="expenseModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Add Expense</h2>
+        <button class="modal-close" onclick="App.closeModal('expenseModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="expenseDateInput">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <div class="category-selector">
+            <button class="cat-select-btn active" data-category="Investments">
+              <span>📈</span> Investments
+            </button>
+            <button class="cat-select-btn" data-category="Need">
+              <span>🏠</span> Need
+            </button>
+            <button class="cat-select-btn" data-category="Fun Money">
+              <span>🎉</span> Fun Money
+            </button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Subcategory</label>
+          <div class="subcategory-row">
+            <select id="expenseSubcatInput"></select>
+            <button class="btn btn-sm btn-ghost" id="addNewSubcatInline" title="Add new subcategory">+</button>
+          </div>
+          <input type="text" id="expenseOtherSubcatInput" class="other-subcat-input" placeholder="Enter custom subcategory..." style="display:none; margin-top:8px;">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" id="expenseDescInput" placeholder="What was this expense for?">
+        </div>
+        <div class="form-group">
+          <label>Amount (₹)</label>
+          <div class="input-group">
+            <span class="input-prefix">₹</span>
+            <input type="number" id="expenseAmountInput" placeholder="0" min="0" step="10">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="App.closeModal('expenseModal')">Cancel</button>
+        <button class="btn btn-accent" id="saveExpenseBtn">Add Expense</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== MANAGE SUBCATEGORIES MODAL ========== -->
+  <div class="modal" id="subcatModal">
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <h2>Manage Subcategories</h2>
+        <button class="modal-close" onclick="App.closeModal('subcatModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="subcat-tabs">
+          <button class="subcat-tab active" data-cat="Investments">📈 Investments</button>
+          <button class="subcat-tab" data-cat="Need">🏠 Need</button>
+          <button class="subcat-tab" data-cat="Fun Money">🎉 Fun Money</button>
+        </div>
+        <div class="subcat-list" id="subcatList"></div>
+        <div class="subcat-add">
+          <input type="text" id="newSubcatInput" placeholder="New subcategory name...">
+          <button class="btn btn-primary btn-sm" id="addSubcatBtn">Add</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="App.closeModal('subcatModal')">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== EDIT EXPENSE MODAL ========== -->
+  <div class="modal" id="editExpenseModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Expense</h2>
+        <button class="modal-close" onclick="App.closeModal('editExpenseModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editExpenseId">
+        <input type="hidden" id="editExpenseMonthKey">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="editExpenseDateInput">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <div class="category-selector" id="editCategorySelector">
+            <button class="cat-select-btn" data-category="Investments">
+              <span>📈</span> Investments
+            </button>
+            <button class="cat-select-btn" data-category="Need">
+              <span>🏠</span> Need
+            </button>
+            <button class="cat-select-btn" data-category="Fun Money">
+              <span>🎉</span> Fun Money
+            </button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Subcategory</label>
+          <select id="editExpenseSubcatInput"></select>
+          <input type="text" id="editOtherSubcatInput" class="other-subcat-input" placeholder="Enter custom subcategory..." style="display:none; margin-top:8px;">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" id="editExpenseDescInput">
+        </div>
+        <div class="form-group">
+          <label>Amount (₹)</label>
+          <div class="input-group">
+            <span class="input-prefix">₹</span>
+            <input type="number" id="editExpenseAmountInput" min="0" step="10">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="App.closeModal('editExpenseModal')">Cancel</button>
+        <button class="btn btn-accent" id="updateExpenseBtn">Update Expense</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== TOAST CONTAINER ========== -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="app.js"></script>
+  <script>
+    // Register Service Worker for offline + installability
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(() => {
+        console.log('Service Worker registered');
+      }).catch(err => console.log('SW registration failed:', err));
+    }
+  </script>
+</body>
+</html>
