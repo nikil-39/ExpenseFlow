@@ -1203,6 +1203,7 @@ body {
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
+    z-index: 250;
   }
   .sidebar.open { transform: translateX(0); }
 
