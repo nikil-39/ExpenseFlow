@@ -82,6 +82,7 @@
 html {
   font-size: 15px;
   scroll-behavior: smooth;
+  touch-action: manipulation;
 }
 
 body {
@@ -92,6 +93,8 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   transition: background var(--transition), color var(--transition);
+  touch-action: manipulation;
+  -ms-touch-action: manipulation;
 }
 
 ::selection {

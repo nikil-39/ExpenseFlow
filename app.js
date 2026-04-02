@@ -1223,13 +1223,17 @@ const App = {
 
     // Mobile hamburger
     document.getElementById('hamburger').addEventListener('click', () => {
-      document.getElementById('sidebar').classList.toggle('open');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('active', sidebar.classList.contains('open'));
     });
 
     // Overlay click closes modals & sidebar
     document.getElementById('overlay').addEventListener('click', () => {
       this.closeAllModals();
       document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('overlay').classList.remove('active');
     });
 
     // Overview year navigation
