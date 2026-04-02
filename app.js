@@ -1411,7 +1411,8 @@ const App = {
           });
         }
         Store.save(this.data);
-        this.refreshAll();
+        this.render();
+        Charts.refreshAll(this.data, this.overviewYear);
         this.toast('Data imported successfully!', 'success');
       } catch (err) {
         console.error('Import error:', err);
