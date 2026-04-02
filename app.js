@@ -1347,6 +1347,75 @@ const App = {
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') this.closeAllModals();
     });
+
+    // Export data
+    document.getElementById('exportDataBtn').addEventListener('click', () => this.exportData());
+
+    // Import data
+    document.getElementById('importDataBtn').addEventListener('click', () => {
+      document.getElementById('importFileInput').click();
+    });
+    document.getElementById('importFileInput').addEventListener('change', (e) => this.importData(e));
+  },
+
+  // ---------- Export/Import Data ----------
+  exportData() {
+    const dataStr = JSON.stringify(this.data, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const date = new Date().toISOString().split('T')[0];
+    a.href = url;
+    a.download = `expenseflow-backup-${date}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    this.toast('Data exported successfully!', 'success');
+  },
+
+  importData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const importedData = JSON.parse(e.target.result);
+        // Validate structure
+        if (!importedData.months || !importedData.subcategories || !importedData.settings) {
+          throw new Error('Invalid backup file structure');
+        }
+        // Merge or replace
+        if (confirm('Do you want to REPLACE all current data? Click Cancel to MERGE instead.')) {
+          this.data = importedData;
+        } else {
+          // Merge months
+          Object.keys(importedData.months).forEach(key => {
+            if (!this.data.months[key]) {
+              this.data.months[key] = importedData.months[key];
+            } else {
+              // Merge expenses
+              const existingIds = this.data.months[key].expenses.map(exp => exp.id);
+              importedData.months[key].expenses.forEach(exp => {
+                if (!existingIds.includes(exp.id)) {
+                  this.data.months[key].expenses.push(exp);
+                }
+              });
+              // Keep higher income
+              this.data.months[key].income = Math.max(this.data.months[key].income, importedData.months[key].income);
+            }
+          });
+        }
+        Store.save(this.data);
+        this.refreshAll();
+        this.toast('Data imported successfully!', 'success');
+      } catch (err) {
+        this.toast('Failed to import: Invalid file format', 'error');
+      }
+    };
+    reader.readAsText(file);
+    event.target.value = ''; // Reset file input
   }
 };
 
