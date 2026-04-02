@@ -1,0 +1,21 @@
+﻿{
+  "months": {
+    "2026-04": {
+      "income": 75000,
+      "expenses": [
+        {"id": "test001", "date": "2026-04-01", "category": "Need", "subcategory": "Groceries", "amount": 1500, "note": "Test expense 1"},
+        {"id": "test002", "date": "2026-04-02", "category": "Fun Money", "subcategory": "Dining Out", "amount": 800, "note": "Test expense 2"},
+        {"id": "test003", "date": "2026-04-03", "category": "Investments", "subcategory": "Mutual Funds", "amount": 10000, "note": "Test investment"}
+      ]
+    }
+  },
+  "subcategories": {
+    "Investments": ["Stocks", "Mutual Funds", "FD", "Gold", "Crypto", "PPF", "Real Estate"],
+    "Need": ["Family", "Petrol", "Groceries", "Rent", "Utilities", "Medical", "Education", "Insurance"],
+    "Fun Money": ["Entertainment", "Shopping", "Dining Out", "Travel", "Hobbies", "Subscriptions"]
+  },
+  "settings": {
+    "theme": "dark",
+    "currency": "₹"
+  }
+}

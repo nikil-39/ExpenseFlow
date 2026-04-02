@@ -1381,7 +1381,10 @@ const App = {
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
-        const importedData = JSON.parse(e.target.result);
+        const text = e.target.result.trim();
+        // Remove BOM if present
+        const cleanText = text.charCodeAt(0) === 0xFEFF ? text.slice(1) : text;
+        const importedData = JSON.parse(cleanText);
         // Validate structure
         if (!importedData.months || !importedData.subcategories || !importedData.settings) {
           throw new Error('Invalid backup file structure');
@@ -1411,7 +1414,8 @@ const App = {
         this.refreshAll();
         this.toast('Data imported successfully!', 'success');
       } catch (err) {
-        this.toast('Failed to import: Invalid file format', 'error');
+        console.error('Import error:', err);
+        this.toast('Failed to import: ' + err.message, 'error');
       }
     };
     reader.readAsText(file);
