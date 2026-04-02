@@ -538,8 +538,9 @@ const App = {
     document.getElementById(`tab-${tabName}`).classList.add('active');
     document.querySelector(`.nav-item[data-tab="${tabName}"]`).classList.add('active');
 
-    // Close mobile sidebar
+    // Close mobile sidebar and overlay
     document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('active');
 
     // Refresh charts when switching tabs
     setTimeout(() => Charts.refreshAll(this.data, this.overviewYear), 100);
